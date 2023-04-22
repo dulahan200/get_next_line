@@ -6,25 +6,30 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 17:48:53 by hmestre-          #+#    #+#             */
-/*   Updated: 2022/12/27 20:13:10 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/04/22 22:25:03 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*  DESCRIPTION
  *  this function returns a line read from a file descriptor
+ *  EOL is defined by a /n or EOF (\0) char
  *
  * INPUTS
  * fd = file descriptor
- * 
+ * BUFFER_SIZE -> defined by the compiler call -D BUFFER_SIZE=n (if not 
+ * defined during compilation it is = 42 as per header file).
+ *
  * OUTPUTS
  * returned value = read line (correct behaviour) or NULL (if any error ocurs)
  *
- * EXTERNAL FUNCTIONS
+ * REQUIRED FILES
+ * get_net_line.h
+ *
+ * EXTERNAL/LIBRARY FUNCTIONS
  * ft_str_len, ft_substr, ft_strjoin, free_str
-
-//buffer size is defined by the compiler call -D BUFFER_SIZE=n
-
- pseudocode:
+ * 
+ *
+ * PSEUDOCODE:
  * 1 check if str_current exist.Create empty string if not
  *
  * 2 reading loop (if no newline in str_current)
@@ -39,17 +44,19 @@
 
 char *free_str(int numOfStrings, char **str, ... )
 {
-	va_list	ap;
-	char	** str_i
-	
-	va_start(ap, str);
-	while (i < numOfStrings)
-	{
-		str_i = (va_arg(ap, char**);
-		free(*str_i);
-		*str_i = NULL;
-	}
-	va_end;
+	va_list	strings;
+	char	*str_i;
+	int		i;
+
+	i = -1;	
+	va_start(strings, str);
+//	while (++i < numOfStrings)
+//	{
+		str_i = *(va_arg(strings, char**));
+		free(str_i);
+//	}
+//	str_i = NULL;
+	va_end(strings);
 	return (NULL);
 }
 
@@ -60,10 +67,11 @@ char	*get_next_line(int fd)
 	char		*tmp_leaks;
 	char 		*str_res;
 
+
 	if (!str_current)
 		str_current = ft_strdup("");	
 	tmp_read = malloc(sizeof(char) * BUFFER_SIZE);
-	if (!tmp_read)
+	if (!tmp_read || BUFFER_SIZE == 0)
 		return (NULL);
 	while (!ft_strchr(str_current,'\n'))
 	{
@@ -72,25 +80,40 @@ char	*get_next_line(int fd)
 		tmp_leaks = ft_strjoin(str_current, tmp_read);
 		if (!tmp_leaks)
 			return (free_str(1, &tmp_read, &str_current));
-		free_str(1, &str_current);
+//		printf("str_current is	|%s|",str_current);		//DEBUG
+	//	free_str(1, &str_current);
+		free(str_current);
+//		printf("program does not reach here\n");
+	//	free_str(1, &str_current);
 		str_current = tmp_leaks;
+		if (!ft_strchr(str_current, '\n'))
+		{
+		//MEMORY CLEANING
+			return (str_current);
+		}
 	}
 	// must code the scenario where it reads end of fd
-	str_res = ft_substr(str_current, 0, str_current - ft_strchr(str_current, '\n') + 1);
-	tmp_leaks = ft_substr(ft_strchr(str_current,'\n'), 1, ft_strlen(ft_strchr(str_current, '\n') - 1);
+//	printf("str_res = |%s|\n", str_res);				 //DEBUG
+//	str_res = ft_substr(str_current, 0, str_current - ft_strchr(str_current, '\n')); //testear si hay que sumar/restar +1
+	str_res = ft_substr(str_current, 0, ft_strchr(str_current, '\n') - str_current + 1); //testear si hay que sumar/restar +1
+//	printf("str_cur = |%s|\n", str_current); 			//DEBUG
+	printf("str_res = |%s|\n", str_res);
+	tmp_leaks = ft_substr(ft_strchr(str_current,'\n'), 1, ft_strlen(ft_strchr(str_current, '\n') - 1)); 
 	if (!tmp_leaks)
 	//check what happens when the read is exactly a line vs a failed malloc
 		return (free_str(1, &tmp_read));
-	free_str(1, &str_current);
+//	free_str(1, &str_current);
 	str_current = tmp_leaks;
-	free_str(1, tmp_leak);
-	free_str(1, tmp_read);
+//	free_str(1, &tmp_leaks);
+//	free_str(1, &tmp_read); //this could go earlier
 	return (str_res);
-//	probably missing: returned line must contain newline.
 //	ft_strjoin segfault strlen(s1)
 //
 }
-/*
+
+
+
+/* Another attempt, might revisit later on if stuck
 char	*get_next_line(int fd)
 {
 	char 		*str_res;
