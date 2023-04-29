@@ -4,11 +4,10 @@ OBJS = ${SRCS:.c=.o}
 OBJSBONUS = ${SRCSBONUS:.c=.o}
 HEADER = get_next_line.h #get_next_line_bonus.h
 
-BUFF = 1000
 CC = gcc
 RM = rm -f
-#CFLAGS = -Wall -Wextra -Werror 
-EXTRAFLAGS = -D BUFFER_SIZE=${BUFF} -fsanitize=address -g 
+CFLAGS = -Wall -Wextra -Werror 
+EXTRAFLAGS = -fsanitize=address -g 
 
 
 
@@ -17,8 +16,8 @@ EXTRAFLAGS = -D BUFFER_SIZE=${BUFF} -fsanitize=address -g
 	@${CC} ${CFLAGS} -c $< -o $@
 
 all:	${OBJS} $(HEADER)
-	@${CC} ${CFLAGS} ${EXTRAFLAGS} main.c ${OBJS} $(HEADER) 
-	@./a.out
+	@${CC} ${CFLAGS} ${EXTRAFLAGS} ${OBJS} $(HEADER) main.c
+	@./a.out ${TEST}
 bonus:	${OBJS} ${OBJSBONUS} $(HEADER)
 	@touch $@
 

@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 17:48:53 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/04/22 22:25:03 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/04/29 21:00:20 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
  * get_net_line.h
  *
  * EXTERNAL/LIBRARY FUNCTIONS
- * ft_str_len, ft_substr, ft_strjoin, free_str
+ * ft_str_len, ft_substr, ft_strjoin, null_free
  * 
  *
  * PSEUDOCODE:
@@ -35,30 +35,24 @@
  * 2 reading loop (if no newline in str_current)
  * 	2a Read a step of buffer size and store in tmp_read
  * 	2b concatenate the reading to str_current
- * 	2c check for newlines
- * 3 process results and cleanup 
- *
+ * 	2c check for newlines and end of file
+ * 3 process results
+ *  3a split string onto str_result and str_current (for next g_n_l call)
+ *  3b Memory cleanup
  *
 */
 #include "get_next_line.h"
 
-char *free_str(int numOfStrings, char **str, ... )
+char	*null_free(char**	str)
 {
-	va_list	strings;
-	char	*str_i;
-	int		i;
-
-	i = -1;	
-	va_start(strings, str);
-//	while (++i < numOfStrings)
-//	{
-		str_i = *(va_arg(strings, char**));
-		free(str_i);
-//	}
-//	str_i = NULL;
-	va_end(strings);
+	if (*str)
+	{
+		free(*str);
+		*str = NULL;
+	}
 	return (NULL);
 }
+
 
 char	*get_next_line(int fd)
 {
@@ -66,74 +60,42 @@ char	*get_next_line(int fd)
 	char		*tmp_read;
 	char		*tmp_leaks;
 	char 		*str_res;
+//	int	i = 1;
 
-
+//	printf("Buffer size =	%d\n", BUFFER_SIZE);
 	if (!str_current)
-		str_current = ft_strdup("");	
-	tmp_read = malloc(sizeof(char) * BUFFER_SIZE);
-	if (!tmp_read || BUFFER_SIZE == 0)
+		str_current = ft_strdup("");
+	if(!str_current)
+	{
+		null_free(&str_current);
 		return (NULL);
+	}
 	while (!ft_strchr(str_current,'\n'))
 	{
-		if (read(fd, tmp_read, BUFFER_SIZE) == -1) 
+	tmp_read = malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if (!tmp_read || BUFFER_SIZE == 0)
+		return (NULL);
+	*(tmp_read + BUFFER_SIZE)  = '\0';
+//	printf("lectura num	%d \n", i++);
+		if (read(fd, tmp_read, BUFFER_SIZE) <= 0) 
 			return (NULL);
+//	printf("tmp_read1 =	|%s|\n", tmp_read);
+//	printf("str_current2 =	|%s|\n", str_current);
 		tmp_leaks = ft_strjoin(str_current, tmp_read);
+		null_free(&str_current);
+		null_free(&tmp_read);
 		if (!tmp_leaks)
-			return (free_str(1, &tmp_read, &str_current));
-//		printf("str_current is	|%s|",str_current);		//DEBUG
-	//	free_str(1, &str_current);
-		free(str_current);
-//		printf("program does not reach here\n");
-	//	free_str(1, &str_current);
+			return (null_free(&str_current));
 		str_current = tmp_leaks;
-		if (!ft_strchr(str_current, '\n'))
-		{
-		//MEMORY CLEANING
-			return (str_current);
-		}
 	}
-	// must code the scenario where it reads end of fd
-//	printf("str_res = |%s|\n", str_res);				 //DEBUG
-//	str_res = ft_substr(str_current, 0, str_current - ft_strchr(str_current, '\n')); //testear si hay que sumar/restar +1
-	str_res = ft_substr(str_current, 0, ft_strchr(str_current, '\n') - str_current + 1); //testear si hay que sumar/restar +1
-//	printf("str_cur = |%s|\n", str_current); 			//DEBUG
-	printf("str_res = |%s|\n", str_res);
+//	printf("str_current2 =	|%s|\n", str_current);
+	str_res = ft_substr(str_current, 0, ft_strchr(str_current, '\n') - str_current + 1); 
 	tmp_leaks = ft_substr(ft_strchr(str_current,'\n'), 1, ft_strlen(ft_strchr(str_current, '\n') - 1)); 
 	if (!tmp_leaks)
-	//check what happens when the read is exactly a line vs a failed malloc
-		return (free_str(1, &tmp_read));
-//	free_str(1, &str_current);
+			return (null_free(&str_current));
+	null_free(&str_current);
 	str_current = tmp_leaks;
-//	free_str(1, &tmp_leaks);
-//	free_str(1, &tmp_read); //this could go earlier
 	return (str_res);
 //	ft_strjoin segfault strlen(s1)
 //
 }
-
-
-
-/* Another attempt, might revisit later on if stuck
-char	*get_next_line(int fd)
-{
-	char 		*str_res;
-	static char *str_previous;
-	char		*tmp_read;
-// estas lineas antes del while inicializan tmp_read (creo que es necesario)
-	tmp_read  = (tmp_read + ft_strlen(tmp_read)) = malloc(sizeof(char) * BUFFER_SIZE);
-	if (!tmp_read)
-		return NULL;
-	read(fd, tmp_read + ft_strlen(tmp_read));
-	while (ft_strchr(tmp_read,'\n') == NULL)
-	{
-	if (!(tmp_read + ft_strlen(tmp_read)) = malloc(sizeof(char) * BUFFER_SIZE))       //are () needed? //malloc de tmp_read ampliando a buffer size
-		return (NULL);
-	if (read(fd, tmp_read +ft_strlen(tmp_read))); //buffer size is defined by the compiler call -D BUFFER_SIZE=n
-	}
-	str_res = ft_substr(tmp_read, 0, tmp_read - ft_strchr(tmp_read, '\n'));
-	str_res = ft_strjoin_withfree(str_previous, tmp);
-	free(str_previous);
-	str_previous = malloc(ft_strlen()
-	}
-	*/
-

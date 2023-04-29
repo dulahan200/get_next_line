@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 18:53:34 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/04/22 19:08:32 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/04/29 17:23:32 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ size_t	ft_strlen(const char *s)
 	size_t	counter;
 
 	counter = 0;
-	while (*s != '\0')
+	while (s && (*s != '\0'))
 	{
 		counter++;
 		s++;
