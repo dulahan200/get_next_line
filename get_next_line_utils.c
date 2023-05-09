@@ -6,16 +6,20 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 18:53:34 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/04/29 17:23:32 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/09 18:58:33 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-size_t	ft_strlen(const char *s)
+size_t	strlen_oknul(const char *s)
 {
 	size_t	counter;
 
 	counter = 0;
+	if (!s)
+		return (0);
+//	if (s == NULL)
+//		return (0);
 	while (s && (*s != '\0'))
 	{
 		counter++;
@@ -32,8 +36,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	char	*res;
 
 	i = 0;
-	s1_len = ft_strlen(s1);
-	s2_len = ft_strlen(s2);
+	s1_len = strlen_oknul(s1);
+	s2_len = strlen_oknul(s2);
 	res = (char *) malloc (sizeof(char) * (s1_len + s2_len + 1));
 	if (res == NULL)
 		return (NULL);
@@ -56,7 +60,7 @@ char	*ft_strdup(const char *s1)
 	char	*s2;
 	size_t	s2_size;
 
-	s2_size = ft_strlen(s1);
+	s2_size = strlen_oknul(s1);
 	s2 = (char *) malloc(s2_size + 1);
 	if (s2 == NULL)
 		return (NULL);
@@ -70,7 +74,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	size_t	i;
 	size_t	len_s;
 
-	len_s = ft_strlen(s);
+	len_s = strlen_oknul(s);
 	i = 0;
 	if (start >= len_s)
 		sub_str = malloc(sizeof(char) * 1);
@@ -94,7 +98,7 @@ char	*ft_strchr(const char *s, int c)
 	size_t	i;
 
 	i = 0;
-	while (i < ft_strlen(s))
+	while (i < strlen_oknul(s))
 	{
 		if (s[i] == (char) c)
 			return (&((char *)s)[i]);

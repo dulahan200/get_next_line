@@ -6,8 +6,9 @@ HEADER = get_next_line.h #get_next_line_bonus.h
 
 CC = gcc
 RM = rm -f
-CFLAGS = -Wall -Wextra -Werror 
-EXTRAFLAGS = -fsanitize=address -g 
+#CFLAGS = -Wall -Wextra -Werror 
+LEAKFLAGS = -fsanitize=address -g 
+DEBUGFLAGS = -g
 
 
 
@@ -18,6 +19,11 @@ EXTRAFLAGS = -fsanitize=address -g
 all:	${OBJS} $(HEADER)
 	@${CC} ${CFLAGS} ${EXTRAFLAGS} ${OBJS} $(HEADER) main.c
 	@./a.out ${TEST}
+
+debug:	$(HEADER)
+	@${CC} ${CFLAGS} ${DEBUGFLAGS} $(HEADER) ${SRCS} main.c
+	@lldb ./a.out ${TEST}
+
 bonus:	${OBJS} ${OBJSBONUS} $(HEADER)
 	@touch $@
 

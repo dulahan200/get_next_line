@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 17:30:43 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/04/29 19:40:51 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/09 18:16:21 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <fcntl.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 2 
+#  define BUFFER_SIZE 4 
 # endif
 typedef const char	t_cchar;
 char	*get_next_line(int fd);
@@ -27,8 +27,10 @@ char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strdup(const char *s1);
 char	*ft_strchr(const char *s, int c);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
-size_t	ft_strlen(const char *s);
+size_t	strlen_oknul(const char *s);
 size_t	ft_strlcpy(char *dest, t_cchar *src, size_t dstsize);
+char	*null_free(char	**str);
+char	*ret_and_free(char	**str);
 
 
 #endif
