@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 17:30:43 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/09 18:16:21 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/15 20:02:58 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <fcntl.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 4 
+#  define BUFFER_SIZE 1 
 # endif
 typedef const char	t_cchar;
 char	*get_next_line(int fd);
@@ -31,6 +31,7 @@ size_t	strlen_oknul(const char *s);
 size_t	ft_strlcpy(char *dest, t_cchar *src, size_t dstsize);
 char	*null_free(char	**str);
 char	*ret_and_free(char	**str);
+char	*process_results(char **str, char **str_res, char *check_read);
 
 
 #endif

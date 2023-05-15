@@ -21,7 +21,7 @@ all:	${OBJS} $(HEADER)
 	@./a.out ${TEST}
 
 debug:	$(HEADER)
-	@${CC} ${CFLAGS} ${DEBUGFLAGS} $(HEADER) ${SRCS} main.c
+	@${CC} -g ${CFLAGS} ${DEBUGFLAGS} $(HEADER) ${SRCS} main.c
 	@lldb ./a.out ${TEST}
 
 bonus:	${OBJS} ${OBJSBONUS} $(HEADER)

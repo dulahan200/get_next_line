@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 18:35:42 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/09 18:17:32 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/15 20:31:36 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ int     main (int argc, char**	argv)
 	folder = strdup("test_files/");
 	file = strcat(folder, argv[1]);
 //	printf("%s\n", file);
-		fd = open(file, O_RDONLY);
+	fd = open(file, O_RDONLY);
 //		printf("fd = %d\n", fd);
-		while (i++ < 5)
+		while (i++ < 2)
 		{
 			printf("invocation num %d\n", i);
 			str = get_next_line(fd);
