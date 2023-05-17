@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 18:53:34 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/09 18:58:33 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/17 20:00:56 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,6 @@ size_t	strlen_oknul(const char *s)
 	size_t	counter;
 
 	counter = 0;
-	if (!s)
-		return (0);
-//	if (s == NULL)
-//		return (0);
 	while (s && (*s != '\0'))
 	{
 		counter++;
@@ -28,7 +24,7 @@ size_t	strlen_oknul(const char *s)
 	return (counter);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin2(char const *s1, char const *s2)
 {
 	size_t	i;
 	size_t	s2_len;
@@ -52,6 +48,45 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		i++;
 	}
 	res[i] = '\0';
+	return (res);
+}
+
+
+char	*ft_strjoin(char *s1, char *s2)
+{
+	size_t	i;
+	size_t	s2_len;
+	size_t	s1_len;
+	char	*res;
+
+	i = 0;
+	if(!s1)
+	{
+		s1 = malloc(sizeof(char) * 1);
+		if(!s1)
+			return NULL;
+		s1[0] = '\0';
+	}
+	s1_len = strlen_oknul(s1);
+	s2_len = strlen_oknul(s2);
+	res = (char *) malloc (sizeof(char) * (s1_len + s2_len + 1));
+	if (res == NULL)
+	{
+		free(s1);
+		return (NULL);
+	}
+	while (i < s1_len)
+	{
+		res[i] = s1[i];
+		i++;
+	}
+	while (i < s1_len + s2_len)
+	{
+		res[i] = s2[i - s1_len];
+		i++;
+	}
+	res[i] = '\0';
+	free(s1);
 	return (res);
 }
 

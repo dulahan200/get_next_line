@@ -17,7 +17,11 @@ DEBUGFLAGS = -g
 	@${CC} ${CFLAGS} -c $< -o $@
 
 all:	${OBJS} $(HEADER)
-	@${CC} ${CFLAGS} ${EXTRAFLAGS} ${OBJS} $(HEADER) main.c
+	@${CC} ${CFLAGS} ${OBJS} $(HEADER) main.c
+	@./a.out ${TEST}
+
+sani:	${OBJS} $(HEADER)
+	${CC} ${CFLAGS} ${LEAKFLAGS} ${OBJS} $(HEADER) main.c
 	@./a.out ${TEST}
 
 debug:	$(HEADER)
