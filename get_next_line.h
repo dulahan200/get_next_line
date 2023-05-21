@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 17:30:43 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/21 12:18:23 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/21 18:32:28 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,7 @@ char	*ft_strchr(const char *s, int c);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 size_t	strlen_oknul(const char *s);
 size_t	ft_strlcpy(char *dest, t_cchar *src, size_t dstsize);
-char	*null_free(char	**str);
-char	*ret_and_free(char	**str);
-char	*process_results(char **str, char *check_read);
-char	*read_line(int fd, char **storage, char *check_read);
+int		null_free(char	**str, int err_code);
 
 #endif
 

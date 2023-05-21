@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 18:53:34 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/21 12:19:03 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/21 20:08:08 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,22 @@ size_t	strlen_oknul(const char *s)
 
 char	*ft_strjoin(char *s1, char *s2)
 {
-	size_t	i;
-	size_t	s2_len;
-	size_t	s1_len;
+	ssize_t	i;
+	ssize_t	s2_len;
+	ssize_t	s1_len;
 	char	*res;
 
-	i = 0;
+	i = -1;
 	s1_len = strlen_oknul(s1);
 	s2_len = strlen_oknul(s2);
 	res = (char *) malloc (sizeof(char) * (s1_len + s2_len + 1));
 	if (res == NULL)
-		return (null_free(&s2));
-	while (i < s1_len)
 	{
-		res[i] = s1[i];
-		i++;
+		free(s1);
+		return (NULL); //nullfree can cut lines
 	}
+	while (++i < s1_len)
+		res[i] = s1[i];
 	while (i < s1_len + s2_len)
 	{
 		res[i] = s2[i - s1_len];
@@ -50,7 +50,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (s1_len + s2_len != 0)
 	res[i] = '\0';
 	free(s1);
-	free(s2);
+//	free(s2);
 	return (res);
 }
 
@@ -96,6 +96,8 @@ char	*ft_strchr(const char *s, int c)
 		return (&((char *)s)[i]);
 	return (NULL);
 }
+
+
 /*
 size_t	ft_strlcpy(char *dest, t_cchar *src, size_t dstsize)
 {

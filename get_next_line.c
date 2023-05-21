@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 17:48:53 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/21 12:35:07 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/21 20:26:48 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,96 +28,104 @@
  * EXTERNAL/LIBRARY FUNCTIONS
  * ft_str_len, ft_substr, ft_strjoin, null_free
  *
- 
 */
 #include "get_next_line.h"
 
-//	tmp_read[0] = '\0';
+static int	read_line(int fd, char **storage);
+static char	*process_results(char **s);
 
-char	*null_free(char**	str)
+int	null_free(char **str, int err_code)
 {
 	if (*str)
 	{
 		free(*str);
 		*str = NULL;
 	}
-	return (NULL);
+	return (err_code);
 }
 
-char	*read_line(int fd, char **storage, char *check_read)
+/*read_line stores in a buffer a loop read on fd that stops on \n or EOF
+ * RETURN VALUES
+ * -1	malloc fails
+ * -2	read fails
+ * 0	EOF without \n
+ * >0	end of line within buffer
+ */
+static int	read_line(int fd, char **storage)
 {
 	char	*tmp_read;
 	int		int_read;
-	char	*str_res;
 
-	str_res = NULL;
-	while (*check_read == '0')
+	int_read = 1;
+	tmp_read = malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if(!tmp_read)
+		return(null_free(storage, - 1));
+	while (int_read > 0 && !ft_strchr(*storage, '\n'))
 	{
-		tmp_read = malloc(sizeof(char) * BUFFER_SIZE + 1);
-		if (!tmp_read || BUFFER_SIZE == 0)
-			return (NULL);
 		int_read = read(fd, tmp_read, BUFFER_SIZE);
-		if (int_read == -1)
-			return (null_free(&tmp_read));
-		if (int_read == 0)
-			*check_read = '\0';
-		else
+		if (int_read == -1){
+			null_free(storage, -2);
+			return (null_free(&tmp_read, -2));
+		}else if (int_read > 0)
 		{
-			*(tmp_read + BUFFER_SIZE)  = '\0';
+			tmp_read[int_read] = '\0';
 			*storage = ft_strjoin(*storage, tmp_read);
 			if (!storage)
-				return (null_free(storage));
+			{
+				free (tmp_read);
+				return (null_free(storage, -1));
+			}
 		}
-		str_res = (process_results(storage, check_read));
 	}
-return (str_res);
+	free(tmp_read);
+	return (int_read);
 }
 
-char	*process_results(char **s, char *check_read)
+static char	*process_results(char **s)
 {
 	char	*tmp;
 	char	*str_res;
 
 	str_res = NULL;
 	if (!*s)
-		return(null_free(s));
+	{
+		null_free(s, 0); //not sure if it adds value
+		return (NULL);
+	}
 	if (ft_strchr(*s, '\n'))
 	{
-		*check_read = '\n';
 		str_res = ft_substr(*s, 0, ft_strchr(*s, '\n') - *s + 1);
-		tmp = ft_substr(ft_strchr(*s,'\n'), 1, strlen_oknul(ft_strchr(*s, '\n') - 1));
+		tmp = ft_substr(ft_strchr(*s, '\n'), 1, strlen_oknul(ft_strchr(*s, '\n') ));
 		if (!tmp)
-			null_free(s);
+			null_free(s, -1);
 		free(*s);
 		*s = tmp;
+		return (str_res);
 	}
+	else if (strlen_oknul(*s) >0)
+	{
+		str_res = ft_substr(*s, 0, ft_strchr(*s, '\0') - *s);
+	}
+		null_free(s, 0);
 	return (str_res);
 }
 
 char	*get_next_line(int fd)
 {
 	static char *storage = NULL;
-	char 		*str_res;
-	char		check_read;
+	char		*str_res;
+	int			err;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return NULL;
-	check_read = '0';
+		return (NULL);
 	str_res = NULL;
-	str_res = process_results(&storage, &check_read);
-	str_res = read_line(fd, &storage, &check_read);
-	if (str_res == NULL)
-		null_free(&storage);
+	err = read_line(fd, &storage);
+	if (storage == NULL || err < 0)
+		return (NULL);
+	str_res = process_results(&storage);
+	if (err == 0)
+		null_free(&storage, 0);
+//	if (str_res[0] == "")
+//		return (NULL);	
 	return (str_res);
 }
-
-
-char	*ret_and_free(char**	str)
-{
-	char	*tmp;
-
-	tmp = *str;
-	null_free(str);
-	return tmp;
-}
-
