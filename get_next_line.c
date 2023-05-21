@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 17:48:53 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/18 20:20:57 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/21 12:35:07 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 */
 #include "get_next_line.h"
 
+//	tmp_read[0] = '\0';
 
 char	*null_free(char**	str)
 {
@@ -43,90 +44,54 @@ char	*null_free(char**	str)
 	return (NULL);
 }
 
-char	*read_line(int fd, char *check_read)
+char	*read_line(int fd, char **storage, char *check_read)
 {
-	char buffer[BUFFER_SIZE + 1];
-	int  num_bites;
-
-	num_bites= 1;
-	buffer[0] = '\0';
-	while(num_bites && !ft_strchr(buffer, '\n'))
-	{
-		num_bites = read(fd, buffer, BUFFER_SIZE);
-		if(num_bites == -1)
-		{
-			free(storage);
-			return NULL;
-		}
-		buffer[num_bite] = '\0';
-		if(num_bite > 0)
-			storage = ft_strjoin(storage, buffer);
-	}
-	return storage;
-}
-	/*char	*tmp_read;
-	int		int_read;
-
-	tmp_read = malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (!tmp_read || BUFFER_SIZE == 0)
-		*check_read = 'm';
-	*(tmp_read + BUFFER_SIZE)  = '\0';
-	int_read = read(fd, tmp_read, BUFFER_SIZE);
-	if (int_read == -1)
-		*check_read = 'f';
-	else if (int_read == 0)
-		*check_read = '\0';
-		return (tmp_read);*/
-
-	/*
 	char	*tmp_read;
 	int		int_read;
+	char	*str_res;
 
-	tmp_read = malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if(!tmp_read){
-		*check_read = -1;
-		return NULL;
-	}
-	tmp_read[0] = '\0';
-	int_read = read(fd, tmp_read, BUFFER_SIZE);
-	if (int_read == -1)
+	str_res = NULL;
+	while (*check_read == '0')
 	{
-		free(tmp_read);
-		*check_read = 'f';
-		return NULL;
+		tmp_read = malloc(sizeof(char) * BUFFER_SIZE + 1);
+		if (!tmp_read || BUFFER_SIZE == 0)
+			return (NULL);
+		int_read = read(fd, tmp_read, BUFFER_SIZE);
+		if (int_read == -1)
+			return (null_free(&tmp_read));
+		if (int_read == 0)
+			*check_read = '\0';
+		else
+		{
+			*(tmp_read + BUFFER_SIZE)  = '\0';
+			*storage = ft_strjoin(*storage, tmp_read);
+			if (!storage)
+				return (null_free(storage));
+		}
+		str_res = (process_results(storage, check_read));
 	}
-	tmp_read[int_read] = '\0';
-	if (int_read == 0)
-	{
-		*check_read = '\0';
-		return (tmp_read);
-	}
-	return (tmp_read);
-	*/
+return (str_res);
 }
 
-/**/
-char	*process_results(char **s, char **str_res, char *check_read)
+char	*process_results(char **s, char *check_read)
 {
 	char	*tmp;
+	char	*str_res;
+
+	str_res = NULL;
 	if (!*s)
-		return("no storage");
+		return(null_free(s));
 	if (ft_strchr(*s, '\n'))
 	{
 		*check_read = '\n';
-		*str_res = ft_substr(*s, 0, ft_strchr(*s, '\n') - *s + 1);
+		str_res = ft_substr(*s, 0, ft_strchr(*s, '\n') - *s + 1);
 		tmp = ft_substr(ft_strchr(*s,'\n'), 1, strlen_oknul(ft_strchr(*s, '\n') - 1));
 		if (!tmp)
-		{
-			free(*s);
-			return (NULL);
-		}
+			null_free(s);
 		free(*s);
 		*s = tmp;
-	return("ok");
 	}
-	*str_res = *s; ///tengo que remirar esto
-	return("ok");
+	return (str_res);
 }
 
 char	*get_next_line(int fd)
@@ -139,28 +104,10 @@ char	*get_next_line(int fd)
 		return NULL;
 	check_read = '0';
 	str_res = NULL;
-	//En storage ya tengo una linea
-	if(!storage || (storage && !ft_strchr(storage, '\n')))
-		storage = read_in_bucle(fd, storage);
-	if(!storage)
-		return(NULL)
-	//Si ya tengo una linea, no me hacve falta leer
-	//Si no tengo una linea si que me hace falta leer
-	//   -- LLamo a la funcion leer hasta que en buffer tenga una linea, final de arvchivo,     //      o error
-	// Si storage es NULL , salgo con NULL
-	// Si no , llamo a funcion extraer una linea de Storage
-	// Si linea = NULL algo a fallado, salgo limpio con NULL
-	// Coje mi Storage, y me lo limpias quitando la primera linea que encuentre
-	process_results(&storage, &str_res, &check_read);
-	while (check_read == '0')
-	{
-		storage = ft_strjoin(storage, read_line(fd, &check_read));
-		if(check_read == 'm' || check_read == 'f')
-			return (null_free(&storage));
-		if(!storage)
-			return (null_free(&storage));
-		process_results(&storage, &str_res, &check_read);
-	}
+	str_res = process_results(&storage, &check_read);
+	str_res = read_line(fd, &storage, &check_read);
+	if (str_res == NULL)
+		null_free(&storage);
 	return (str_res);
 }
 
