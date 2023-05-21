@@ -10,23 +10,22 @@ RM = rm -f
 LEAKFLAGS = -fsanitize=address -g 
 DEBUGFLAGS = -g
 
-
-
+TESTFOLDER = test_files/
 
 %.o : %.c	$(HEADER)
 	@${CC} ${CFLAGS} -c $< -o $@
 
 all:	${OBJS} $(HEADER)
 	@${CC} ${CFLAGS} ${OBJS} $(HEADER) main.c
-	@./a.out ${TEST}
+	@./a.out ${TESTFOLDER}${TEST}
 
 sani:	${OBJS} $(HEADER)
 	${CC} ${CFLAGS} ${LEAKFLAGS} ${OBJS} $(HEADER) main.c
-	@./a.out ${TEST}
+	./a.out ${TESTFOLDER}${TEST}
 
 debug:	$(HEADER)
-	@${CC} -g ${CFLAGS} ${DEBUGFLAGS} $(HEADER) ${SRCS} main.c
-	@lldb ./a.out ${TEST}
+	${CC} -g ${CFLAGS} ${DEBUGFLAGS} $(HEADER) ${SRCS} main.c
+	lldb ./a.out ${TESTFOLDER}${TEST}
 
 bonus:	${OBJS} ${OBJSBONUS} $(HEADER)
 	@touch $@
@@ -37,5 +36,8 @@ clean:
 fclean:			clean
 
 re:		fclean all
+
+.SILENT:
+
 
 .PHONY: all clean fclean re sani
