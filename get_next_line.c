@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 17:48:53 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/21 20:26:48 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/23 17:32:56 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,17 @@ static int	read_line(int fd, char **storage)
 
 	int_read = 1;
 	tmp_read = malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if(!tmp_read)
-		return(null_free(storage, - 1));
+	if (!tmp_read)
+		return (null_free(storage, -1));
 	while (int_read > 0 && !ft_strchr(*storage, '\n'))
 	{
 		int_read = read(fd, tmp_read, BUFFER_SIZE);
-		if (int_read == -1){
+		if (int_read == -1)
+		{
 			null_free(storage, -2);
 			return (null_free(&tmp_read, -2));
-		}else if (int_read > 0)
+		}
+		else if (int_read > 0)
 		{
 			tmp_read[int_read] = '\0';
 			*storage = ft_strjoin(*storage, tmp_read);
@@ -96,10 +98,11 @@ static char	*process_results(char **s)
 	{
 		str_res = ft_substr(*s, 0, ft_strchr(*s, '\n') - *s + 1);
 		tmp = ft_substr(ft_strchr(*s, '\n'), 1, strlen_oknul(ft_strchr(*s, '\n') ));
-		if (!tmp)
-			null_free(s, -1);
-		free(*s);
+		null_free(s, 0);
 		*s = tmp;
+		if (!tmp)
+			return (NULL);
+	//	tmp = NULL; //not really needed but helps with paco nullchecks
 		return (str_res);
 	}
 	else if (strlen_oknul(*s) >0)
@@ -125,7 +128,5 @@ char	*get_next_line(int fd)
 	str_res = process_results(&storage);
 	if (err == 0)
 		null_free(&storage, 0);
-//	if (str_res[0] == "")
-//		return (NULL);	
 	return (str_res);
 }
