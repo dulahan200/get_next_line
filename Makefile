@@ -10,7 +10,8 @@ RM = rm -f
 LEAKFLAGS = -fsanitize=address -g 
 DEBUGFLAGS = -g
 
-TESTFOLDER = test_files/
+#TESTFOLDER = test_files/
+TESTFOLDER = pacotest/
 
 %.o : %.c	$(HEADER)
 	@${CC} ${CFLAGS} -c $< -o $@

@@ -6,7 +6,7 @@
 /*   By: hmestre- <hmestre-@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 17:48:53 by hmestre-          #+#    #+#             */
-/*   Updated: 2023/05/23 17:32:56 by hmestre-         ###   ########.fr       */
+/*   Updated: 2023/05/23 20:36:26 by hmestre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,6 @@
 
 static int	read_line(int fd, char **storage);
 static char	*process_results(char **s);
-
-int	null_free(char **str, int err_code)
-{
-	if (*str)
-	{
-		free(*str);
-		*str = NULL;
-	}
-	return (err_code);
-}
 
 /*read_line stores in a buffer a loop read on fd that stops on \n or EOF
  * RETURN VALUES
@@ -73,15 +63,15 @@ static int	read_line(int fd, char **storage)
 			tmp_read[int_read] = '\0';
 			*storage = ft_strjoin(*storage, tmp_read);
 			if (!storage)
-			{
-				free (tmp_read);
-				return (null_free(storage, -1));
-			}
+				return (null_free(&tmp_read, -1));
 		}
 	}
-	free(tmp_read);
-	return (int_read);
+	return (null_free(&tmp_read, int_read));
 }
+		/*	{
+				free (tmp_read);
+				return (null_free(storage, -1));
+			}*/
 
 static char	*process_results(char **s)
 {
@@ -89,33 +79,28 @@ static char	*process_results(char **s)
 	char	*str_res;
 
 	str_res = NULL;
-	if (!*s)
-	{
-		null_free(s, 0); //not sure if it adds value
-		return (NULL);
-	}
 	if (ft_strchr(*s, '\n'))
 	{
+		tmp = ft_substr(ft_strchr(*s, '\n'), 1, strlen0(ft_strchr(*s, '\n')));
 		str_res = ft_substr(*s, 0, ft_strchr(*s, '\n') - *s + 1);
-		tmp = ft_substr(ft_strchr(*s, '\n'), 1, strlen_oknul(ft_strchr(*s, '\n') ));
 		null_free(s, 0);
-		*s = tmp;
 		if (!tmp)
+		{
+			null_free(&str_res, -1);
 			return (NULL);
-	//	tmp = NULL; //not really needed but helps with paco nullchecks
+		}	
+		*s = tmp;
 		return (str_res);
 	}
-	else if (strlen_oknul(*s) >0)
-	{
+	else if (strlen0(*s) > 0)
 		str_res = ft_substr(*s, 0, ft_strchr(*s, '\0') - *s);
-	}
-		null_free(s, 0);
+	null_free(s, 0);
 	return (str_res);
 }
 
 char	*get_next_line(int fd)
 {
-	static char *storage = NULL;
+	static char	*storage = NULL;
 	char		*str_res;
 	int			err;
 
@@ -126,7 +111,7 @@ char	*get_next_line(int fd)
 	if (storage == NULL || err < 0)
 		return (NULL);
 	str_res = process_results(&storage);
-	if (err == 0)
+	if (err == 0 || !str_res)
 		null_free(&storage, 0);
 	return (str_res);
 }
